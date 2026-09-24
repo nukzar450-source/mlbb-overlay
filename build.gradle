@@ -20,6 +20,6 @@ allprojects {
     }
 }
 
-tasks.register('clean', Delete) {
+task clean(type: Delete) {
     delete getLayout().getBuildDirectory()
 }
