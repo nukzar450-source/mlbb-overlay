@@ -24,11 +24,20 @@ jobs:
       with:
         packages: "platforms;android-33 build-tools;33.0.2 ndk;25.1.8937393 cmake;3.22.1"
 
-    - name: Install System Gradle
-      run: sudo apt-get update && sudo apt-get install -y gradle
+    - name: Download and Setup Modern Gradle 8.5
+      run: |
+        wget https://services.gradle.org/distributions/gradle-8.5-bin.zip
+        unzip -q gradle-8.5-bin.zip
+        echo "$PWD/gradle-8.5/bin" >> $GITHUB_PATH
 
-    - name: Build with System Gradle
-      run: gradle assembleRelease || gradle build
+    - name: Generate Proper Gradle Wrapper
+      run: gradle wrapper --gradle-version 8.5
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew assembleRelease
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
