@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">LGL Mod Menu</string>
+    <string name="app_name">Overlay Loader</string>
+    <string name="loader_title">Overlay Loader</string>
+    <string name="loader_subtitle">Control the local overlay service</string>
+    <string name="action_launch">Launch</string>
+    <string name="action_start">Start</string>
+    <string name="action_stop">Stop</string>
+    <string name="status_ready">Ready</string>
+    <string name="status_running">Overlay service is running</string>
+    <string name="status_stopped">Overlay service is stopped</string>
+    <string name="status_permission_required">Overlay permission is required</string>
+    <string name="status_start_failed">Unable to start the overlay service</string>
+    <string name="permissions_hint">Grant “Display over other apps” permission before launching the overlay.</string>
 </resources>
