@@ -22,14 +22,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle(getString(R.string.app_name));
         setContentView(createContentView());
     }
 
     private View createContentView() {
-        ScrollView scrollView = new ScrollView(this);
-        scrollView.setFillViewport(true);
-        scrollView.setBackgroundColor(Color.rgb(12, 16, 22));
+        ScrollView root = new ScrollView(this);
+        root.setFillViewport(true);
+        root.setBackgroundColor(Color.rgb(12, 16, 22));
 
         LinearLayout content = new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
@@ -40,38 +39,52 @@ public class MainActivity extends Activity {
         title.setText(R.string.loader_title);
         title.setTextColor(Color.WHITE);
         title.setTextSize(28);
-        title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        title.setTypeface(Typeface.DEFAULT_BOLD);
         title.setGravity(Gravity.CENTER);
-        content.addView(title, widthParams(dp(320), dp(56)));
+        content.addView(title, wrapCenter(dp(320), dp(58)));
 
         TextView subtitle = new TextView(this);
         subtitle.setText(R.string.loader_subtitle);
         subtitle.setTextColor(Color.rgb(180, 190, 205));
         subtitle.setTextSize(14);
         subtitle.setGravity(Gravity.CENTER);
-        content.addView(subtitle, widthParams(dp(320), dp(44)));
+        content.addView(subtitle, wrapCenter(dp(320), dp(42)));
 
         statusText = new TextView(this);
-        statusText.setText(R.string.status_ready);
+        statusText.setText(hasOverlayPermission() ? R.string.status_ready : R.string.status_permission_required);
         statusText.setTextColor(Color.rgb(180, 190, 205));
         statusText.setTextSize(14);
         statusText.setGravity(Gravity.CENTER);
-        content.addView(statusText, widthParams(dp(320), dp(36)));
+        content.addView(statusText, wrapCenter(dp(320), dp(36)));
 
-        Button launchButton = createButton(R.string.action_launch, 54);
+        Button launchButton = new Button(this);
+        launchButton.setText(R.string.action_launch);
+        launchButton.setTextColor(Color.WHITE);
+        launchButton.setTextSize(18);
+        launchButton.setAllCaps(false);
+        launchButton.setBackgroundColor(Color.rgb(26, 104, 238));
         launchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 launchOverlay();
             }
         });
-        content.addView(launchButton, widthParams(dp(320), dp(62)));
+        content.addView(launchButton, wrapCenter(dp(320), dp(62)));
 
-        LinearLayout actions = new LinearLayout(this);
-        actions.setOrientation(LinearLayout.HORIZONTAL);
-        actions.setGravity(Gravity.CENTER);
+        LinearLayout controls = new LinearLayout(this);
+        controls.setOrientation(LinearLayout.HORIZONTAL);
+        controls.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams controlParams = new LinearLayout.LayoutParams(
+                0, dp(52), 1.0f
+        );
+        controlParams.setMargins(dp(6), dp(12), dp(6), 0);
 
-        Button startButton = createButton(R.string.action_start, 46);
+        Button startButton = new Button(this);
+        startButton.setText(R.string.action_start);
+        startButton.setTextColor(Color.WHITE);
+        startButton.setTextSize(16);
+        startButton.setAllCaps(false);
+        startButton.setBackgroundColor(Color.rgb(23, 120, 73));
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +92,12 @@ public class MainActivity extends Activity {
             }
         });
 
-        Button stopButton = createButton(R.string.action_stop, 46);
+        Button stopButton = new Button(this);
+        stopButton.setText(R.string.action_stop);
+        stopButton.setTextColor(Color.WHITE);
+        stopButton.setTextSize(16);
+        stopButton.setAllCaps(false);
+        stopButton.setBackgroundColor(Color.rgb(162, 53, 53));
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,34 +105,19 @@ public class MainActivity extends Activity {
             }
         });
 
-        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
-                0, dp(52), 1.0f);
-        buttonParams.setMargins(dp(6), dp(12), dp(6), 0);
-        actions.addView(startButton, buttonParams);
-        actions.addView(stopButton, new LinearLayout.LayoutParams(buttonParams));
-        content.addView(actions, widthParams(dp(320), dp(72)));
+        controls.addView(startButton, controlParams);
+        controls.addView(stopButton, new LinearLayout.LayoutParams(controlParams));
+        content.addView(controls, wrapCenter(dp(320), dp(76)));
 
         TextView hint = new TextView(this);
         hint.setText(R.string.permissions_hint);
         hint.setTextColor(Color.rgb(150, 160, 172));
         hint.setTextSize(12);
         hint.setGravity(Gravity.CENTER);
-        content.addView(hint, widthParams(dp(320), dp(60)));
+        content.addView(hint, wrapCenter(dp(320), dp(60)));
 
-        scrollView.addView(content);
-        return scrollView;
-    }
-
-    private Button createButton(int textRes, int minHeightDp) {
-        Button button = new Button(this);
-        button.setText(textRes);
-        button.setTextColor(Color.WHITE);
-        button.setTextSize(16);
-        button.setAllCaps(false);
-        button.setMinHeight(dp(minHeightDp));
-        button.setGravity(Gravity.CENTER);
-        button.setBackgroundColor(Color.rgb(32, 52, 74));
-        return button;
+        root.addView(content);
+        return root;
     }
 
     private void launchOverlay() {
@@ -147,27 +150,27 @@ public class MainActivity extends Activity {
     }
 
     private boolean hasOverlayPermission() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M
-                || Settings.canDrawOverlays(this);
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || Settings.canDrawOverlays(this);
     }
 
     private void openOverlaySettings() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Intent intent = new Intent(
                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:" + getPackageName()));
+                    Uri.parse("package:" + getPackageName())
+            );
             startActivity(intent);
         }
     }
 
-    private void setStatus(int textRes) {
+    private void setStatus(int textResId) {
         if (statusText != null) {
-            statusText.setText(textRes);
+            statusText.setText(textResId);
         }
     }
 
-    private LinearLayout.LayoutParams widthParams(int width, int height) {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
+    private LinearLayout.LayoutParams wrapCenter(int widthPx, int heightPx) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(widthPx, heightPx);
         params.gravity = Gravity.CENTER_HORIZONTAL;
         return params;
     }
@@ -180,11 +183,9 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         if (statusText != null) {
-            if (hasOverlayPermission()) {
-                statusText.setText(R.string.status_ready);
-            } else {
-                statusText.setText(R.string.status_permission_required);
-            }
+            statusText.setText(hasOverlayPermission()
+                    ? R.string.status_ready
+                    : R.string.status_permission_required);
         }
     }
 }
