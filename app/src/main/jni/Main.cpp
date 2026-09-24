@@ -48,6 +48,7 @@ jobjectArray GetFeatureList(JNIEnv *env, jobject context) {
             OBFUSCATE("ButtonOnOff_The On/Off button"),
             OBFUSCATE("CheckBox_The Check Box"),
             OBFUSCATE("InputValue_Input number"),
+            OBFUSCATE("777_Button_Gusion Macro (Combo 1)"),
             OBFUSCATE("InputValue_1000_Input number 2"), //Max value
 			OBFUSCATE("1111_InputLValue_Input long number"),
             OBFUSCATE("InputLValue_1000000000000_Input long number 2"), //Max value
@@ -97,6 +98,9 @@ bool btnPressed = false;
 void Changes(JNIEnv *env, jclass clazz, jobject obj, jint featNum, jstring featName, jint value, jlong Lvalue, jboolean boolean, jstring text) {
 
     switch (featNum) {
+        case 777:
+            system("/data/local/tmp/macro.sh combo1 &");
+            break;
         case 0:
             // offset, hex
             PATCH_SWITCH(targetLibName, "0x1079728", "C0 03 5F D6", boolean);
