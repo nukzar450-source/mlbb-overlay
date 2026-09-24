@@ -24,14 +24,11 @@ jobs:
       with:
         packages: "platforms;android-33 build-tools;33.0.2 ndk;25.1.8937393 cmake;3.22.1"
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
+    - name: Install System Gradle
+      run: sudo apt-get update && sudo apt-get install -y gradle
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-
-    - name: Build with Gradle
-      run: ./gradlew assembleRelease || ./gradlew build
+    - name: Build with System Gradle
+      run: gradle assembleRelease || gradle build
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
